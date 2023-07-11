@@ -91,13 +91,17 @@ const sql = require('mssql');
 
 // Create a database connection configuration
 const config = {
-  user: 'SAAD-ALI\dell', // Replace with your database username
-  password: 'your-password', // Replace with your database password
-  server: 'Saad-Ali\SQLEXPRESS02', // Replace with your database server name or IP address
+  // user: 'SAAD-ALI\dell', // Replace with your database username
+  // password: 'your-password', // Replace with your database password
+  server: 'Saad-Ali', // Replace with your database server name or IP address
   database: 'HRM', // Replace with your database name
+  dialect:'mssql',
+  port:1433,
   options: {
     encrypt: false, // Change to true if using SSL/TLS encryption
-    trustServerCertificate: true, // Change to false if not using self-signed certificates
+    trustServerCertificate: true,
+     // Change to false if not using self-signed certificates
+     instancename:'SQLEXPRESS02'
   },
 };
 
