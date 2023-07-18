@@ -1,67 +1,38 @@
-const sql = require('mssql');
-
-const pool = require('../db/db.js');
-const getAllTeamLeads = async () => {
+const { pool } = require('../../db/db');
+async function getAllTeamLeads(ctx) {
   try {
-    const pool = await sql.connect(config);
-    const result = await pool.query('SELECT * FROM teamlead');
-    return result.recordset;
-  } catch (error) {
-    console.error('Failed to fetch team leads:', error);
-    throw error;
+    const query = 'SELECT * FROM TeamLead';
+    const result = await db.query(query);
+    ctx.body = result.recordset;
+  } catch (err) {
+    console.error('Error fetching team leads:', err);
+    ctx.status = 500;
+    ctx.body = { message: 'Error fetching team leads' };
+  }
+}
+const addTeamLead = async (ctx) => {
+  try {
+    const { name, pak } = ctx.request.body;
+    await pool.connect();
+    // Insert the new team lead data into the database without specifying the id column
+    const query = 'INSERT INTO TeamLead (name, pak) VALUES (@name, @pak)';
+    const result = await pool.request().input('name', name).input('pak', pak).query(query);
+    await pool.close();
+    // If the insertion is successful, send a success response
+    if (result.rowsAffected[0] > 0) {
+      ctx.status = 201;
+      ctx.body = { message: 'Team lead added successfully' };
+    } else {
+      ctx.status = 500;
+      ctx.body = { message: 'Failed to add team lead' };
+    }
+  } catch (err) {
+    console.error('Error adding team lead:', err);
+    ctx.status = 500;
+    ctx.body = { message: 'Failed to add team lead' };
   }
 };
-
-const getTeamLeadById = async (id) => {
-  try {
-    const pool = await sql.connect(config);
-    const result = await pool.query(`SELECT * FROM teamlead WHERE id = ${id}`);
-    return result.recordset[0];
-  } catch (error) {
-    console.error(`Failed to fetch team lead with id ${id}:`, error);
-    throw error;
-  }
-};
-
-const addTeamLead = async (teamLeadData) => {
-  try {
-    const pool = await sql.connect(config);
-    const { name, pakno } = teamLeadData;
-    const result = await pool.query(`INSERT INTO teamlead (name, pakno) VALUES ('${name}', '${pakno}')`);
-    return result;
-  } catch (error) {
-    console.error('Failed to insert team lead:', error);
-    throw error;
-  }
-};
-
-const updateTeamLead = async (id, updatedData) => {
-  try {
-    const pool = await sql.connect(config);
-    const { name, pakno } = updatedData;
-    const result = await pool.query(`UPDATE teamlead SET name = '${name}', pakno = '${pakno}' WHERE id = ${id}`);
-    return result;
-  } catch (error) {
-    console.error(`Failed to update team lead with id ${id}:`, error);
-    throw error;
-  }
-};
-
-const deleteTeamLead = async (id) => {
-  try {
-    const pool = await sql.connect(config);
-    const result = await pool.query(`DELETE FROM teamlead WHERE id = ${id}`);
-    return result;
-  } catch (error) {
-    console.error(`Failed to delete team lead with id ${id}:`, error);
-    throw error;
-  }
-};
-
 module.exports = {
-  getAllTeamLeads,
-  getTeamLeadById,
-  addTeamLead,
-  updateTeamLead,
-  deleteTeamLead,
-};
+     addTeamLead,
+     getAllTeamLeads
+   };
