@@ -138,20 +138,54 @@ const getProjectById = async (ctx) => {
 
 
 // Function to fetch all projects from the projects table
+// const getAllProjects = async (ctx) => {
+//   try {
+//     // Open the database connection
+//     await pool.connect();
+
+//     // Fetch all projects from the projects table
+//     const query = 'SELECT * FROM Projects';
+//     const result = await pool.request().query(query);
+
+//     // Close the database connection
+//     await pool.close();
+
+//     // Return the list of projects
+//     ctx.body = result.recordset;
+//   } catch (err) {
+//     console.error('Error fetching projects:', err);
+
+//     // Close the database connection in case of an error
+//     await pool.close();
+
+//     ctx.status = 500;
+//     ctx.body = { message: 'Failed to fetch projects' };
+//   }
+// };
 const getAllProjects = async (ctx) => {
   try {
+    // Get query parameters for pagination (page number and page size)
+    const { page = 1, pageSize = 10 } = ctx.query;
+    const offset = (page - 1) * pageSize;
+
     // Open the database connection
     await pool.connect();
 
-    // Fetch all projects from the projects table
-    const query = 'SELECT * FROM Projects';
-    const result = await pool.request().query(query);
+    // Fetch paginated projects from the projects table
+    const query = 'SELECT * FROM Projects ORDER BY id OFFSET @offset ROWS FETCH NEXT @pageSize ROWS ONLY';
+    const result = await pool.request()
+      .input('offset', offset)
+      .input('pageSize', pageSize)
+      .query(query);
 
     // Close the database connection
     await pool.close();
 
-    // Return the list of projects
-    ctx.body = result.recordset;
+    // Return the paginated projects and total count
+    ctx.body = {
+      projects: result.recordset,
+      totalCount: result.recordset.length,
+    };
   } catch (err) {
     console.error('Error fetching projects:', err);
 
