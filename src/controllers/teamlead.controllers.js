@@ -1,9 +1,11 @@
 const { pool } = require('../../db/db');
 async function getAllTeamLeads(ctx) {
   try {
+    await pool.connect();
     const query = 'SELECT * FROM TeamLead';
-    const result = await db.query(query);
+    const result = await pool.query(query);
     ctx.body = result.recordset;
+    await pool.close();
   } catch (err) {
     console.error('Error fetching team leads:', err);
     ctx.status = 500;
