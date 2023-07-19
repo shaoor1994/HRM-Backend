@@ -1,8 +1,21 @@
 const { pool } = require('../../db/db');
+// async function getAllTeamLeads(ctx) {
+//   try {
+//     await pool.connect();
+//     const query = 'SELECT * FROM TeamLead';
+//     const result = await pool.query(query);
+//     ctx.body = result.recordset;
+//     await pool.close();
+//   } catch (err) {
+//     console.error('Error fetching team leads:', err);
+//     ctx.status = 500;
+//     ctx.body = { message: 'Error fetching team leads' };
+//   }
+// }
 async function getAllTeamLeads(ctx) {
   try {
     await pool.connect();
-    const query = 'SELECT * FROM TeamLead';
+    const query = 'SELECT id, name FROM TeamLead'; // Select only the ID and name columns
     const result = await pool.query(query);
     ctx.body = result.recordset;
     await pool.close();

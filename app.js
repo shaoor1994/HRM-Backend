@@ -24,6 +24,19 @@ app.use(async (ctx, next) => {
 });
 
 // Routes for projects
+// app.use(async (ctx, next) => {
+//   if (ctx.method === 'GET' && ctx.path === '/api/projects') {
+//     await projectsController.getAllProjects(ctx);
+//   } else if (ctx.method === 'POST' && ctx.path === '/api/projects') {
+//     await projectsController.addProject(ctx);
+//   } else if (ctx.method === 'PUT' && ctx.path.startsWith('/api/projects/')) {
+//     await projectsController.updateProject(ctx);
+//   } else if (ctx.method === 'DELETE' && ctx.path.startsWith('/api/projects/')) {
+//     await projectsController.deleteProject(ctx);
+//   } else {
+//     await next(); // Continue to the next middleware if the route is not found
+//   }
+// });
 app.use(async (ctx, next) => {
   if (ctx.method === 'GET' && ctx.path === '/api/projects') {
     await projectsController.getAllProjects(ctx);
@@ -33,11 +46,12 @@ app.use(async (ctx, next) => {
     await projectsController.updateProject(ctx);
   } else if (ctx.method === 'DELETE' && ctx.path.startsWith('/api/projects/')) {
     await projectsController.deleteProject(ctx);
+  } else if (ctx.method === 'GET' && ctx.path.startsWith('/api/projects/')) {
+    await projectsController.getProjectById(ctx); // Handle the GET request for specific project by ID
   } else {
     await next(); // Continue to the next middleware if the route is not found
   }
 });
-
 // Routes for developers
 app.use(async (ctx, next) => {
   if (ctx.method === 'GET' && ctx.path === '/api/developers') {

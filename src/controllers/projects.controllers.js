@@ -103,6 +103,40 @@ const deleteProject = async (ctx) => {
   }
 };
 
+const getProjectById = async (ctx) => {
+  try {
+    // Get the project ID from the request URL (assuming the ID is part of the URL)
+    const projectId = parseInt(ctx.params.id);
+
+    // Open the database connection
+    await pool.connect();
+
+    // Fetch the project from the projects table based on its ID
+    const query = 'SELECT * FROM Projects WHERE id = @projectId';
+    const result = await pool.request().input('projectId', projectId).query(query);
+
+    // Close the database connection
+    await pool.close();
+
+    // If a project is found, return it. Otherwise, return 404 status code.
+    if (result.recordset.length > 0) {
+      ctx.body = result.recordset[0];
+    } else {
+      ctx.status = 404;
+      ctx.body = { message: 'Project not found' };
+    }
+  } catch (err) {
+    console.error('Error fetching project by ID:', err);
+
+    // Close the database connection in case of an error
+    await pool.close();
+
+    ctx.status = 500;
+    ctx.body = { message: 'Failed to fetch project by ID' };
+  }
+};
+
+
 // Function to fetch all projects from the projects table
 const getAllProjects = async (ctx) => {
   try {
@@ -134,4 +168,5 @@ module.exports = {
   updateProject,
   deleteProject,
   getAllProjects,
+  getProjectById
 };
