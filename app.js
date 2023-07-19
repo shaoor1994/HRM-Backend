@@ -9,7 +9,7 @@ const teamleadController = require('./src/controllers/teamlead.controllers');
 const projectsController = require('./src/controllers/projects.controllers');
 const developerController = require('./src/controllers/developers.controllers');
 const { connectDB } = require('./db/db');
-
+app.use(bodyParser());
 // Routes for team leads
 app.use(async (ctx, next) => {
   if (ctx.method === 'GET' && ctx.path === '/api/teamleads') {
@@ -53,7 +53,7 @@ app.use(async (ctx, next) => {
 app.use(router.routes());
 app.use(router.routes()).use(router.allowedMethods());
 // Start the server
-const PORT = 3000; // Choose an appropriate port number
+const PORT = 5000; // Choose an appropriate port number
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
 });
