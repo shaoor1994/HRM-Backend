@@ -2,6 +2,7 @@ const Koa = require('koa');
 const Router = require('koa-router');
 const pool = require('./db/db'); // Import your database connection pool module
 // Other imports and dependencies
+const cors = require('@koa/cors');
 const bodyParser = require('koa-bodyparser');
 const app = new Koa();
 const router = new Router();
@@ -10,6 +11,7 @@ const projectsController = require('./src/controllers/projects.controllers');
 const developerController = require('./src/controllers/developers.controllers');
 const { connectDB } = require('./db/db');
 app.use(bodyParser());
+app.use(cors());
 // Routes for team leads
 app.use(async (ctx, next) => {
   if (ctx.method === 'GET' && ctx.path === '/api/teamleads') {
