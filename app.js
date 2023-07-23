@@ -66,6 +66,10 @@ app.use(async (ctx, next) => {
     await next(); // Continue to the next middleware if the route is not found
   }
 });
+connectDB().catch((err) => {
+  console.error('Failed to connect to the database:', err);
+  process.exit(1); // Terminate the application if database connection fails
+});
 app.use(router.routes());
 app.use(router.routes()).use(router.allowedMethods());
 // Start the server
@@ -73,3 +77,4 @@ const PORT = 5000; // Choose an appropriate port number
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
 });
+
